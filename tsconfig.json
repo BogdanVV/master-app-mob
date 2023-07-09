@@ -1,0 +1,20 @@
+{
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "compilerOptions": {
+    "typeRoots": ["./src/types", "node_modules/@types"],
+    "baseUrl": "./",
+    "paths": {
+      "@components": ["./src/components"],
+      "@screens": ["./src/screens"],
+      "@screens/*": ["./src/screens/*"],
+      "@types": ["./src/types"],
+      "@types/*": ["./src/types/*"],
+      "@store": ["./src/store"],
+      "@utils": ["./src/utils"],
+      "@utils/*": ["./src/utils/*"],
+      "@forms": ["./src/forms"],
+      "@forms/*": ["./src/forms/*"]
+    },
+    "types": ["styled-components-react-native"]
+  }
+}
