@@ -1,10 +1,22 @@
 import { PropsWithChildren } from 'react'
-import { FullScrollView, LayoutContainer } from './styled'
+import { SafeAreaView, ScrollView, StyleSheet } from 'react-native'
 
 export const ScreenLayout = ({ children }: PropsWithChildren) => {
   return (
-    <LayoutContainer>
-      <FullScrollView>{children}</FullScrollView>
-    </LayoutContainer>
+    <SafeAreaView style={styles.layoutContainer}>
+      <ScrollView contentContainerStyle={styles.fullScrollView}>
+        {children}
+      </ScrollView>
+    </SafeAreaView>
   )
 }
+
+const styles = StyleSheet.create({
+  layoutContainer: {
+    flex: 1,
+    backgroundColor: '#18181b',
+  },
+  fullScrollView: {
+    flex: 1,
+  },
+})

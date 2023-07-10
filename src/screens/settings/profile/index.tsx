@@ -1,16 +1,16 @@
 import { BackButton, ScreenLayout } from '@components'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { IRNFile, SettingsStackType } from '@types'
-import {
-  HeaderContainer,
-  LoadingIndicatorContainer,
-  ScreenContentContainer,
-  Title,
-} from './styled'
 import { useAppAuth } from 'src/store/auth'
 import { useFocusEffect } from '@react-navigation/native'
 import { useCallback, useState } from 'react'
-import { ActivityIndicator, Platform } from 'react-native'
+import {
+  ActivityIndicator,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import Toast from 'react-native-toast-message'
 import {
   ImagePickerResponse,
@@ -131,16 +131,16 @@ export const ProfileSettingsScreen = ({ navigation }: IProps) => {
         onGallerySelect={onGallerySelect}
         onTakePhotoSelect={onTakePhotoSelect}
       />
-      <HeaderContainer>
+      <View style={styles.headerContainer}>
         <BackButton onPress={goBack} />
-      </HeaderContainer>
+      </View>
       {isLoadingUserInfo ? (
-        <LoadingIndicatorContainer>
+        <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#1d4ed8" />
-        </LoadingIndicatorContainer>
+        </View>
       ) : (
-        <ScreenContentContainer>
-          <Title>Edit your profile FFS</Title>
+        <View style={styles.screenContentContainer}>
+          <Text style={styles.title}>Edit your profile FFS</Text>
           <UpdateProfileForm
             avatarUrl={avatarUrl}
             isAndroid={isAndroid}
@@ -150,8 +150,29 @@ export const ProfileSettingsScreen = ({ navigation }: IProps) => {
             user={user}
             newAvatar={newAvatar}
           />
-        </ScreenContentContainer>
+        </View>
       )}
     </ScreenLayout>
   )
 }
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    padding: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  screenContentContainer: {
+    padding: 16,
+    gap: 16,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 24,
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+})

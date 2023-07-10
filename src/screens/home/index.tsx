@@ -1,10 +1,18 @@
-import { ScreenTitle } from './styled'
+import { StyleSheet, Text } from 'react-native'
 import { ScreenLayout } from 'src/components/ScreenLayout'
 
 export const HomeScreen = () => {
   return (
     <ScreenLayout>
-      <ScreenTitle>Home Screen</ScreenTitle>
+      <Text style={styles.screenTitle}>Home Screen</Text>
     </ScreenLayout>
   )
 }
+
+const styles = StyleSheet.create({
+  screenTitle: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 24,
+  },
+})

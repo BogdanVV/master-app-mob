@@ -1,5 +1,9 @@
-import { TouchableOpacityProps } from 'react-native'
-import { StyledPrimaryButton, PrimaryButtonTitle } from './styled'
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableOpacityProps,
+} from 'react-native'
 
 export interface IPrimaryButtonProps extends TouchableOpacityProps {
   bgColor?: string
@@ -16,15 +20,30 @@ export const ButtonPrimary = ({
   disabled = false,
 }: IPrimaryButtonProps) => {
   return (
-    <StyledPrimaryButton
+    <TouchableOpacity
       activeOpacity={0.7}
       onPress={disabled ? () => undefined : onPress}
-      bgColor={bgColor}
-      titleColor={titleColor}
-      title={title}
       disabled={disabled}
+      style={[
+        styles.button,
+        { backgroundColor: disabled ? '#d1d5db' : bgColor },
+      ]}
     >
-      <PrimaryButtonTitle titleColor={titleColor}>{title}</PrimaryButtonTitle>
-    </StyledPrimaryButton>
+      <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
+    </TouchableOpacity>
   )
 }
+const styles = StyleSheet.create({
+  button: {
+    borderRadius: 100,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 'auto',
+  },
+  title: {
+    fontWeight: '700',
+    fontSize: 16,
+  },
+})

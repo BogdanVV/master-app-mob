@@ -1,17 +1,16 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import {
-  Avatar,
-  AvatarTouchableContainer,
-  CameraIcon,
-  CameraIconContainer,
-  FormContainer,
-  SubmitButtonContainer,
-} from './styled'
 import { AppTextInput, ButtonPrimary } from '@components'
 import { IRNFile, IUser } from '@types'
 import { useEffect } from 'react'
+import {
+  ImageBackground,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 interface IProps {
   avatarUrl?: string
@@ -66,9 +65,6 @@ export const UpdateProfileForm = ({
     mode: 'onBlur',
   })
 
-  console.log('errors>>>', errors)
-  console.log('isValid>>>', isValid)
-
   useEffect(() => {
     setValue('email', user?.email)
     setValue('name', user?.name)
@@ -90,9 +86,10 @@ export const UpdateProfileForm = ({
   }, [newAvatar])
 
   return (
-    <FormContainer>
-      <AvatarTouchableContainer activeOpacity={0.7} onPress={onAvatarPress}>
-        <Avatar
+    <View style={styles.container}>
+      <TouchableOpacity activeOpacity={0.7} onPress={onAvatarPress}>
+        <ImageBackground
+          style={styles.avatar}
           source={{
             uri: newAvatar
               ? newAvatar.uri
@@ -102,11 +99,11 @@ export const UpdateProfileForm = ({
                 }:9999/profile-image/default_avatar.jpeg`,
           }}
         >
-          <CameraIconContainer>
-            <CameraIcon name="camera-outline" size={24} color="#fff" />
-          </CameraIconContainer>
-        </Avatar>
-      </AvatarTouchableContainer>
+          <View style={styles.cameraIconContainer}>
+            <Icon name="camera-outline" size={24} color="#fff" />
+          </View>
+        </ImageBackground>
+      </TouchableOpacity>
       <Controller
         control={control}
         rules={{
@@ -141,13 +138,39 @@ export const UpdateProfileForm = ({
           />
         )}
       />
-      <SubmitButtonContainer>
+      <View style={styles.submitButtonContainer}>
         <ButtonPrimary
           disabled={!isDirty || isUpdatingProfile || !isValid}
           title="SUBMIT"
           onPress={handleSubmit(onSubmit)}
         />
-      </SubmitButtonContainer>
-    </FormContainer>
+      </View>
+    </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 16,
+  },
+  submitButtonContainer: {
+    marginTop: 24,
+  },
+  avatarTouchableContainer: {
+    alignSelf: 'center',
+  },
+  avatar: {
+    width: 150,
+    height: 150,
+    borderRadius: 1000,
+    overflow: 'hidden',
+    marginBottom: 16,
+    justifyContent: 'flex-end',
+    alignSelf: 'center',
+  },
+  cameraIconContainer: {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+})

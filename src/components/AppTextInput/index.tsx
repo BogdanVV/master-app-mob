@@ -1,12 +1,12 @@
-import { NativeSyntheticEvent, TextInputFocusEventData } from 'react-native'
 import {
-  ErrorMessage,
-  InputContainer,
-  Label,
-  StyledTextInput,
-  InputView,
-  ToggleVisibilityIconContainer,
-} from './styled'
+  NativeSyntheticEvent,
+  StyleSheet,
+  Text,
+  TextInput,
+  TextInputFocusEventData,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import { useState } from 'react'
 import { FieldError } from 'react-hook-form'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -40,15 +40,27 @@ export const AppTextInput = ({
   }
 
   return (
-    <InputContainer>
+    <View>
       {label ? (
-        <Label isError={!!error} isFocused={isFocused}>
+        <Text
+          style={[
+            styles.label,
+            !!error && styles.labelError,
+            isFocused && styles.labelFocused,
+          ]}
+        >
           {label}
-        </Label>
+        </Text>
       ) : null}
-      <InputView isError={!!error} isFocused={isFocused}>
-        <StyledTextInput
-          isFocused={isFocused}
+      <View
+        style={[
+          styles.inputView,
+          !!error && styles.inputViewError,
+          isFocused && styles.inputViewFocused,
+        ]}
+      >
+        <TextInput
+          style={styles.textInput}
           placeholder={placeholder}
           onBlur={onBlurExtended}
           onChangeText={onChange}
@@ -56,10 +68,10 @@ export const AppTextInput = ({
           value={value}
           placeholderTextColor="#9ca3af"
           secureTextEntry={!isValueVisible}
-          isError={!!error}
         />
         {secureTextEntry && value ? (
-          <ToggleVisibilityIconContainer
+          <TouchableOpacity
+            activeOpacity={0.7}
             onPress={() => setIsValueVisible(prev => !prev)}
           >
             <Icon
@@ -67,10 +79,50 @@ export const AppTextInput = ({
               size={24}
               color="white"
             />
-          </ToggleVisibilityIconContainer>
+          </TouchableOpacity>
         ) : null}
-      </InputView>
-      <ErrorMessage>{error?.message || ' '}</ErrorMessage>
-    </InputContainer>
+      </View>
+      <Text style={styles.errorMessage}>{error?.message || ' '}</Text>
+    </View>
   )
 }
+
+const styles = StyleSheet.create({
+  label: {
+    color: '#fff',
+    fontSize: 16,
+    paddingHorizontal: 8,
+    marginBottom: 8,
+    fontWeight: '700',
+  },
+  labelError: { color: '#dc2626' },
+  labelFocused: { color: '#1d4ed8' },
+  inputView: {
+    flexDirection: 'row',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+  inputViewError: {
+    borderColor: '#dc2626',
+  },
+  inputViewFocused: { borderColor: '#1d4ed8' },
+  textInput: {
+    color: '#fff',
+    fontSize: 16,
+    flex: 1,
+    padding: 0,
+  },
+  errorMessage: {
+    marginTop: 4,
+    color: '#dc2626',
+    paddingHorizontal: 8,
+  },
+  visibilityIconContainer: {
+    width: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+})

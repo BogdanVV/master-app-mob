@@ -1,4 +1,5 @@
-import { BackIcon, Container } from './styled'
+import { StyleSheet, TouchableOpacity } from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 interface IProps {
   onPress?: () => void
@@ -6,8 +7,23 @@ interface IProps {
 
 export const BackButton = ({ onPress }: IProps) => {
   return (
-    <Container onPress={onPress}>
-      <BackIcon name="arrow-back-outline" size={32} />
-    </Container>
+    <TouchableOpacity
+      style={styles.container}
+      activeOpacity={0.7}
+      onPress={onPress}
+    >
+      <Icon name="arrow-back-outline" size={32} color="#fff" />
+    </TouchableOpacity>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    borderRadius: 9999,
+    alignSelf: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 60,
+    width: 60,
+  },
+})

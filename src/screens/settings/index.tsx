@@ -1,13 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { ScreenLayout } from 'src/components/ScreenLayout'
 import { useAppTheme } from 'src/store/theme'
-import {
-  HeaderContainer,
-  OptionsContainer,
-  ScreenTitle,
-  StyledIcon,
-  TitleContainer,
-} from './styled'
 import { useAppAuth } from 'src/store/auth'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { SettingsStackType } from '@types'
@@ -40,19 +33,19 @@ export const SettingsScreen = ({ navigation }: IProps) => {
             activeOpacity={0.7}
             onPress={() => changeTheme('light')}
           >
-            <StyledIcon name="sunny-outline" size={32} />
+            <Icon name="sunny-outline" size={32} color="#fff" />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => changeTheme('dark')}
           >
-            <StyledIcon name="moon" size={32} />
+            <Icon name="moon" size={32} color="#fff" />
           </TouchableOpacity>
         )}
       </View>
       <UserInfoCard user={user} />
-      <OptionsContainer>
+      <View style={styles.optionsContainer}>
         <OptionItem
           title="Profile"
           iconName="person-outline"
@@ -65,7 +58,7 @@ export const SettingsScreen = ({ navigation }: IProps) => {
           iconName="exit-outline"
           onPress={() => logout()}
         />
-      </OptionsContainer>
+      </View>
     </ScreenLayout>
   )
 }
@@ -92,5 +85,9 @@ const styles = StyleSheet.create({
   screenTitle: {
     fontSize: 32,
     color: '#fff',
+  },
+  optionsContainer: {
+    borderTopWidth: 1,
+    borderColor: '#18181b',
   },
 })

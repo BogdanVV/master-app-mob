@@ -1,18 +1,9 @@
 import { AppTextInput, ButtonPrimary, ScreenLayout } from '@components'
 import { Controller, useForm } from 'react-hook-form'
-import { ActivityIndicator, Button, View } from 'react-native'
+import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native'
 import { useAppAuth } from 'src/store/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import {
-  Container,
-  ErrorMessage,
-  FormContainer,
-  SignUpHint,
-  SignUpLink,
-  SubmitButtonContainer,
-  Title,
-} from './styled'
 import { ENV, CHEAT_LOGIN_EMAIL, CHEAT_LOGIN_PASSWORD } from '@env'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -61,18 +52,23 @@ export const LoginScreen = ({ navigation }: IProps) => {
   if (isRefreshingToken) {
     return (
       <ScreenLayout>
-        <Container>
+        <View style={styles.screenContainer}>
           <ActivityIndicator />
-        </Container>
+        </View>
       </ScreenLayout>
     )
   }
 
   return (
     <ScreenLayout>
-      <Container>
-        <Title>Login</Title>
-        <FormContainer>
+      {/* <View
+        style={{ flex: 1, borderWidth: 3, borderColor: 'blue', height: '100%' }}
+      >
+        <Text style={{ color: '#fff' }}>123</Text>
+      </View> */}
+      <View style={styles.screenContainer}>
+        <Text style={styles.screenTitle}>Login</Text>
+        <View style={styles.formContainer}>
           <Controller
             control={control}
             rules={{
@@ -108,15 +104,17 @@ export const LoginScreen = ({ navigation }: IProps) => {
               />
             )}
           />
-          <SubmitButtonContainer>
+          <View style={styles.submitButtonContainer}>
             <ButtonPrimary
               disabled={!isValid || isLoggingIn}
               title="SUBMIT"
               onPress={handleSubmit(onSubmit)}
             />
-          </SubmitButtonContainer>
-          {loginError ? <ErrorMessage>Failed to login</ErrorMessage> : null}
-        </FormContainer>
+          </View>
+          {loginError ? (
+            <Text style={styles.errorMessage}>Failed to login</Text>
+          ) : null}
+        </View>
         {ENV === 'dev' && (
           <Button
             title="CHEAT LOGIN"
@@ -129,17 +127,50 @@ export const LoginScreen = ({ navigation }: IProps) => {
           />
         )}
         <View>
-          <SignUpHint>Don't have account yet?</SignUpHint>
+          <Text style={styles.signUpHint}>Don't have account yet?</Text>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('Signup')
             }}
             activeOpacity={0.7}
           >
-            <SignUpLink>Sign up</SignUpLink>
+            <Text style={[styles.signUpHint, styles.signUpLink]}>Sign up</Text>
           </TouchableOpacity>
         </View>
-      </Container>
+      </View>
     </ScreenLayout>
   )
 }
+
+const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    gap: 32,
+  },
+  screenTitle: {
+    color: '#fff',
+    fontSize: 32,
+  },
+  formContainer: {
+    width: '100%',
+    gap: 16,
+  },
+  submitButtonContainer: {
+    marginTop: 24,
+  },
+  errorMessage: {
+    color: '#dc2626',
+  },
+  signUpHint: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 16,
+  },
+  signUpLink: {
+    color: '#1d4ed8',
+    fontWeight: '700',
+  },
+})

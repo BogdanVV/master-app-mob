@@ -52,6 +52,10 @@ export const useAppAuth = create<IAppAuthStore>((set, get) => ({
     } catch (err) {
       console.log('login err>>>', err)
       set(state => ({ ...state, loginError: new Error('failed to login') }))
+      Toast.show({
+        type: 'error',
+        text2: 'Failed to login',
+      })
     } finally {
       set(state => ({ ...state, isLoggingIn: false }))
     }
@@ -140,8 +144,6 @@ export const useAppAuth = create<IAppAuthStore>((set, get) => ({
         formData.append(entry[0], entry[1])
       })
 
-      console.log('formData>>>', formData)
-
       const data = (
         await http.put<{ data: IUser }>(
           `/api/users/${get().user?.id}`,
@@ -150,6 +152,7 @@ export const useAppAuth = create<IAppAuthStore>((set, get) => ({
             headers: {
               'content-type': 'multipart/form-data',
             },
+            transformRequest: d => d,
           },
         )
       ).data

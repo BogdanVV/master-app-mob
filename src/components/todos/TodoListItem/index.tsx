@@ -1,31 +1,25 @@
 import { ITodo, TodoPriorities } from 'src/store/todos'
-import {
-  TodoDescription,
-  TodoItemContainer,
-  TodoTitle,
-  TopContainer,
-  ChevronsContainer,
-  StarIcon,
-  DaysOfWeekContainer,
-  DayOfWeek,
-  BottomContainer,
-} from './styled'
 import { DAYS_OF_WEEK_FULL, DAYS_OF_WEEK_SHORT } from 'src/constants'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 type Props = {
   todo: ITodo
+  isChecked: boolean
+  onCheckPress: (id: number) => void
 }
 
-export const TodoListItem = ({ todo }: Props) => {
-  const getPriority = (): number => {
+export const TodoListItem = ({ todo, isChecked, onCheckPress }: Props) => {
+  const getPriorityIconProps = (): { name: string; color: string } => {
     if (todo.priority === TodoPriorities.LOW) {
-      return 1
-    } else if (todo.priority === TodoPriorities.MEDIUM) {
-      return 2
-    } else {
-      return 3
+      return { name: 'chevron-up', color: '#fff' }
     }
+    if (todo.priority === TodoPriorities.MEDIUM) {
+      return { name: 'chevron-double-up', color: '#f97316' }
+    }
+    return { name: 'chevron-triple-up', color: '#dc2626' }
   }
+  const priorityIconProps = getPriorityIconProps()
 
   const getActiveDaysIndexes = (): number[] => {
     if (todo.isDaily) {
@@ -42,31 +36,103 @@ export const TodoListItem = ({ todo }: Props) => {
   const activeDaysIndexes = getActiveDaysIndexes()
 
   return (
-    <TodoItemContainer activeOpacity={0.7}>
-      <TopContainer>
-        <TodoTitle>{todo.title}</TodoTitle>
-        <ChevronsContainer>
-          {Array(getPriority())
-            .fill(1)
-            .map((_, i) => (
-              <StarIcon key={i} name="star" color="#fbbf24" size={16} />
-            ))}
-        </ChevronsContainer>
-      </TopContainer>
-      <BottomContainer>
-        <TodoDescription>{todo.description}</TodoDescription>
-        <DaysOfWeekContainer>
-          {(todo.activeDays?.length > 0 || todo.isDaily) &&
-            DAYS_OF_WEEK_SHORT.map((d, i) => (
-              <DayOfWeek
-                key={`${d}${i}`}
-                isActive={activeDaysIndexes.includes(i)}
+    <TouchableOpacity
+      style={styles.container}
+      activeOpacity={0.7}
+      onPress={() => {
+        console.log('todo item click')
+      }}
+    >
+      <View style={styles.infoContainer}>
+        <View style={styles.topInfoContainer}>
+          <Text style={styles.title}>{todo.title}</Text>
+          <Icon
+            name={priorityIconProps.name}
+            color={priorityIconProps.color}
+            size={24}
+          />
+        </View>
+        <View>
+          <Text style={styles.description}>{todo.description}</Text>
+        </View>
+        {todo.isDaily || todo.activeDays?.length > 0 ? (
+          <View style={styles.daysOfWeekContainer}>
+            {DAYS_OF_WEEK_SHORT.map((day, index) => (
+              <Text
+                key={`${day}-${index}`}
+                style={
+                  activeDaysIndexes.includes(index)
+                    ? styles.dayActive
+                    : styles.dayInactive
+                }
               >
-                {d}
-              </DayOfWeek>
+                {day}
+              </Text>
             ))}
-        </DaysOfWeekContainer>
-      </BottomContainer>
-    </TodoItemContainer>
+          </View>
+        ) : null}
+      </View>
+      <TouchableOpacity
+        onPress={() => onCheckPress(todo.id)}
+        activeOpacity={0.7}
+        style={styles.checkboxContainer}
+      >
+        <View style={styles.checkbox}>
+          {isChecked && <Icon name="check" color="#fff" />}
+        </View>
+      </TouchableOpacity>
+    </TouchableOpacity>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderRadius: 10,
+    paddingLeft: 16,
+    flexDirection: 'row',
+    position: 'relative',
+  },
+  infoContainer: {
+    borderRightWidth: 1,
+    borderColor: '#fff',
+    flex: 1,
+    marginVertical: 10,
+    gap: 6,
+  },
+  checkboxContainer: {
+    padding: 16,
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 20,
+    color: '#fff',
+    fontWeight: '700',
+  },
+  topInfoContainer: {
+    flexDirection: 'row',
+    gap: 10,
+    justifyContent: 'space-between',
+    paddingRight: 10,
+  },
+  checkbox: {
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 24,
+    height: 24,
+  },
+  description: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  daysOfWeekContainer: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+  dayActive: { color: '#fff' },
+  dayInactive: { color: '#71717a' },
+})

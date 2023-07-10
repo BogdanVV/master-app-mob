@@ -11,5 +11,6 @@ module.exports = {
     ],
     'react/react-in-jsx-scope': 'off',
     'react-hooks/exhaustive-deps': 'warn',
+    'react/no-unstable-nested-components': 'off',
   },
 }

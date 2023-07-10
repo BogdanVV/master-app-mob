@@ -4,20 +4,13 @@ import {
   ButtonPrimary,
   ScreenLayout,
 } from '@components'
-import {
-  ErrorMessage,
-  FormContainer,
-  HeaderContainer,
-  ScreenContentContainer,
-  SubmitButtonContainer,
-  Title,
-} from './styled'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { AuthStackType } from '@types'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAppAuth } from 'src/store/auth'
+import { StyleSheet, Text, View } from 'react-native'
 
 interface IProps {
   navigation: StackNavigationProp<AuthStackType, 'Signup'>
@@ -79,12 +72,12 @@ export const SignUpScreen = ({ navigation }: IProps) => {
 
   return (
     <ScreenLayout>
-      <HeaderContainer>
+      <View style={styles.headerContainer}>
         <BackButton onPress={() => navigation.goBack()} />
-      </HeaderContainer>
-      <ScreenContentContainer>
-        <Title>Sign Up</Title>
-        <FormContainer>
+      </View>
+      <View style={styles.screenContentContainer}>
+        <Text style={styles.title}>Sign Up</Text>
+        <View style={styles.formContainer}>
           <Controller
             control={control}
             rules={{
@@ -155,16 +148,45 @@ export const SignUpScreen = ({ navigation }: IProps) => {
               />
             )}
           />
-          <SubmitButtonContainer>
+          <View style={styles.submitButtonContainer}>
             <ButtonPrimary
               title="SUBMIT"
               disabled={!isValid || isSigningUp}
               onPress={handleSubmit(onSubmit)}
             />
-          </SubmitButtonContainer>
-          {signUpError ? <ErrorMessage>Failed to sign up.</ErrorMessage> : null}
-        </FormContainer>
-      </ScreenContentContainer>
+          </View>
+          {signUpError ? (
+            <Text style={styles.errorMessage}>Failed to sign up.</Text>
+          ) : null}
+        </View>
+      </View>
     </ScreenLayout>
   )
 }
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    padding: 16,
+  },
+  screenContentContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    gap: 32,
+    padding: 16,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 32,
+  },
+  formContainer: {
+    width: '100%',
+    gap: 16,
+  },
+  errorMessage: {
+    color: '#dc2626',
+  },
+  submitButtonContainer: {
+    marginTop: 24,
+  },
+})

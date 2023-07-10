@@ -8,7 +8,7 @@ const TEN_SECONDS = 10000
 export const testHttp = axios.create({
   baseURL: 'https://jsonplaceholder.typicode.com/',
   // for correct processing of files, see https://stackoverflow.com/a/71116822/16197359
-  transformRequest: data => data,
+  // transformRequest: data => data,
   timeout: TEN_SECONDS,
 })
 
@@ -19,13 +19,13 @@ const devBaseUrl =
 export const http = axios.create({
   baseURL: ENV !== 'dev' ? BACKEND_BASE_URL : devBaseUrl,
   // for correct processing of files, see https://stackoverflow.com/a/71116822/16197359
-  transformRequest: data => data,
+  // transformRequest: data => data,
   timeout: TEN_SECONDS,
 })
 
 http.interceptors.request.use(async config => {
   const accessToken = await AsyncStorage.getItem('accessToken')
   config.headers.Authorization = `Bearer ${accessToken}`
-  console.log('config>>>', config)
+  // console.log('config>>>', config)
   return config
 })
