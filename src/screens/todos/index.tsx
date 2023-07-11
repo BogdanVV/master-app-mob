@@ -1,6 +1,7 @@
 import { TodoListItem, TodoRevertCheckToast } from '@components'
 import { useCallback, useEffect, useState } from 'react'
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,7 +9,7 @@ import {
   View,
 } from 'react-native'
 import { ScreenLayout } from 'src/components/ScreenLayout'
-import { useTodos } from 'src/store/todos'
+import { TodoStatuses, useTodos } from 'src/store/todos'
 import { shallow } from 'zustand/shallow'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -19,34 +20,59 @@ interface IProps {
 }
 
 export const TodosScreen = ({ navigation }: IProps) => {
-  const { loadTodos, isTodosLoading, todosLoadingError, todos } = useTodos(
+  const {
+    loadTodos,
+    isTodosLoading,
+    todosLoadingError,
+    todos,
+    updateTodo,
+    // isUpdatingTodo,
+    // updatingTodoError,
+  } = useTodos(
     state => ({
       loadTodos: state.loadTodos,
       isTodosLoading: state.isTodosLoading,
       todosLoadingError: state.todosLoadingError,
       todos: state.todos,
+      updateTodo: state.updateTodo,
+      isUpdatingTodo: state.isUpdatingTodo,
+      updatingTodoError: state.updatingTodoError,
     }),
     shallow,
   )
   const [isRevertToastVisible, setIsRevertToastVisible] =
     useState<boolean>(false)
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
+  const [updateConfirmTimer, setUpdateConfirmTimer] =
+    useState<NodeJS.Timeout | null>(null)
 
   const onTodoPress = (id: number) => {
     navigation.navigate('Todo', { id })
   }
 
+  const cancelUpdate = () => {
+    if (updateConfirmTimer) {
+      clearTimeout(updateConfirmTimer)
+    }
+    setIsRevertToastVisible(false)
+  }
+
   const onCheckPress = (id: number) => {
-    console.log('id>>>', id)
     if (!isRevertToastVisible) {
       setIsRevertToastVisible(true)
-      setTimeout(() => {
-        setIsRevertToastVisible(false)
-      }, 3000)
+      setUpdateConfirmTimer(
+        setTimeout(() => {
+          setIsRevertToastVisible(false)
+          updateTodo(id, { status: TodoStatuses.COMPLETED })
+        }, 3000),
+      )
     }
   }
 
   const onRefresh = useCallback(() => {
+    setIsRefreshing(true)
     loadTodos()
+    setIsRefreshing(false)
   }, [])
 
   useEffect(() => {
@@ -54,8 +80,11 @@ export const TodosScreen = ({ navigation }: IProps) => {
   }, [loadTodos])
 
   return (
-    <ScreenLayout isRefreshing={isTodosLoading} onRefresh={onRefresh}>
-      <TodoRevertCheckToast isVisible={isRevertToastVisible} todoId={123} />
+    <ScreenLayout isRefreshing={false} onRefresh={onRefresh}>
+      <TodoRevertCheckToast
+        isVisible={isRevertToastVisible}
+        onUndoPress={cancelUpdate}
+      />
       <View style={styles.contentContainer}>
         <TouchableOpacity
           style={styles.addButton}
@@ -71,11 +100,15 @@ export const TodosScreen = ({ navigation }: IProps) => {
           <Text style={styles.screenTitle}>Todos</Text>
         </View>
         {todosLoadingError ? (
-          <Text style={{ color: '#fff' }}>
-            Error: {todosLoadingError.message}
-          </Text>
+          <View style={styles.loadingStatusContainer}>
+            <Text style={{ color: '#fff' }}>
+              Error: {todosLoadingError?.message}
+            </Text>
+          </View>
         ) : isTodosLoading ? (
-          <Text style={{ color: '#fff' }}>Loading...</Text>
+          <View style={styles.loadingStatusContainer}>
+            <ActivityIndicator size={40} color="#fff" />
+          </View>
         ) : (
           <ScrollView contentContainerStyle={styles.listContainer}>
             {todos.map(t => (
@@ -112,6 +145,10 @@ export const TodosScreen = ({ navigation }: IProps) => {
 }
 
 const styles = StyleSheet.create({
+  loadingStatusContainer: {
+    paddingTop: 24,
+    alignItems: 'center',
+  },
   contentContainer: {
     flex: 1,
     paddingHorizontal: 10,

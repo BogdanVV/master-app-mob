@@ -13,17 +13,28 @@ import { useTodos } from 'src/store/todos'
 import { shallow } from 'zustand/shallow'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { getPriorityIconProps } from '@utils'
+import dayjs from 'dayjs'
 
 type Props = StackScreenProps<TodosStackType, 'Todo'>
 
 export const TodoScreen = ({ route, navigation }: Props) => {
   const [isEditingMode, setIsEditingMode] = useState<boolean>(false)
-  const { getTodoById, getTodoByIdError, isGettingTodoById, todo } = useTodos(
+  const {
+    getTodoById,
+    getTodoByIdError,
+    isGettingTodoById,
+    todo,
+    isUpdatingTodo,
+    // updatingTodoError,
+  } = useTodos(
     state => ({
       todo: state.todo,
       isGettingTodoById: state.isGettingTodoById,
       getTodoByIdError: state.getTodoByIdError,
       getTodoById: state.getTodoById,
+      updateTodo: state.updateTodo,
+      isUpdatingTodo: state.isUpdatingTodo,
+      updatingTodoError: state.updatingTodoError,
     }),
     shallow,
   )
@@ -34,11 +45,15 @@ export const TodoScreen = ({ route, navigation }: Props) => {
     getTodoById(route.params.id)
   }, [])
 
-  const onDeletePress = () => {}
+  const onDeletePress = () => {
+    // show modal
+  }
 
   const onEditPress = () => setIsEditingMode(prev => !prev)
 
-  const onCheckPress = () => {}
+  const onCheckPress = () => {
+    // show cancel pop-up
+  }
 
   useEffect(() => {
     getTodoById(route.params.id)
@@ -58,11 +73,11 @@ export const TodoScreen = ({ route, navigation }: Props) => {
     )
   }
 
-  if (isGettingTodoById) {
+  if (isGettingTodoById || isUpdatingTodo) {
     return (
       <ScreenLayout>
         <View style={styles.screenStatusContainer}>
-          <ActivityIndicator size={64} color="#fff" />
+          <ActivityIndicator size={40} color="#fff" />
         </View>
       </ScreenLayout>
     )
@@ -98,6 +113,10 @@ export const TodoScreen = ({ route, navigation }: Props) => {
                 <Text style={styles.subTitle}>{todo?.title}</Text>
               </View>
               <View style={styles.infoCategoryContainer}>
+                <Text style={styles.title}>Status</Text>
+                <Text style={styles.subTitle}>{todo?.status}</Text>
+              </View>
+              <View style={styles.infoCategoryContainer}>
                 <Text style={styles.title}>Priority</Text>
                 <View style={styles.priorityValueContainer}>
                   <Icon
@@ -114,6 +133,12 @@ export const TodoScreen = ({ route, navigation }: Props) => {
                 <Text style={styles.title}>Description</Text>
                 <Text style={styles.subTitle}>
                   {todo?.description ?? 'No description provided'}
+                </Text>
+              </View>
+              <View style={styles.infoCategoryContainer}>
+                <Text style={styles.title}>Creation Date</Text>
+                <Text style={styles.subTitle}>
+                  {dayjs(todo?.createdAt).format('DD MMM YYYY')}
                 </Text>
               </View>
             </>
@@ -162,6 +187,7 @@ const styles = StyleSheet.create({
   subTitle: {
     fontSize: 16,
     color: '#fff',
+    textTransform: 'capitalize',
   },
   infoContainer: {
     paddingVertical: 16,

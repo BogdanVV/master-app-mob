@@ -9,10 +9,29 @@ export enum TodoStatuses {
   FAILED = 'failed',
 }
 
+export interface ITodoUpdateBody {
+  title?: string
+  description?: string
+  status?: TodoStatuses
+  activeDays?: DaysOfWeek
+  priority?: TodoPriorities
+  isDaily?: boolean
+}
+
 export enum TodoPriorities {
   HIGH = 'high',
   MEDIUM = 'medium',
   LOW = 'low',
+}
+
+export enum DaysOfWeek {
+  MONDAY = 'Monday',
+  TUESDAY = 'Tuesday',
+  WEDNESDAY = 'Wednesday',
+  THURSDAY = 'Thursdya',
+  FRIDAY = 'Friday',
+  SATURDAY = 'Saturday',
+  SUNDAY = 'Sunday',
 }
 
 export interface ITodo {
@@ -42,7 +61,7 @@ interface ITodosStore {
   createTodo: () => void
   isUpdatingTodo: boolean
   updatingTodoError: Error | null
-  updateTodo: (id: number) => void
+  updateTodo: (id: number, body: ITodoUpdateBody) => void
   isDeletingTodo: boolean
   deleteTodoError: Error | null
   deleteTodo: (id: number) => void
@@ -100,8 +119,34 @@ export const useTodos = create<ITodosStore>(set => ({
   createTodo: async () => {},
   isUpdatingTodo: false,
   updatingTodoError: null,
-  updateTodo: async (id: number) => {
-    console.log('id>>>', id)
+  updateTodo: async (id: number, body: ITodoUpdateBody) => {
+    try {
+      set(state => ({
+        ...state,
+        isUpdatingTodo: true,
+        updatingTodoError: null,
+      }))
+
+      const data = (await http.put<{ data: ITodo }>(`/api/todos/${id}`, body))
+        .data
+      console.log('data>>>', data)
+      set(state => ({ ...state, todo: data.data }))
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'success',
+        text2: 'Update successfully',
+      })
+    } catch (err) {
+      console.error(err)
+      set(state => ({ ...state, updatingTodoError: new Error() }))
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'error',
+        text2: 'Failed to update',
+      })
+    } finally {
+      set(state => ({ ...state, isUpdatingTodo: false }))
+    }
   },
   isDeletingTodo: false,
   deleteTodoError: null,

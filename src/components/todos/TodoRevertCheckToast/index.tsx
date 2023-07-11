@@ -12,16 +12,14 @@ import Animated, {
 import Icon from 'react-native-vector-icons/Ionicons'
 
 interface IProps {
-  todoId: number
   isVisible: boolean
+  onUndoPress: () => void
 }
 
-export const TodoRevertCheckToast = ({ todoId, isVisible }: IProps) => {
+export const TodoRevertCheckToast = ({ isVisible, onUndoPress }: IProps) => {
   const bottom = useSharedValue(-300)
   const style = useAnimatedStyle(() => ({
-    bottom: withTiming(bottom.value, {
-      // easing: Easing.circle,
-    }),
+    bottom: withTiming(bottom.value),
   }))
   const timeoutBar = useSharedValue(300)
   const timeoutBarStyle = useAnimatedStyle(() => ({
@@ -50,7 +48,11 @@ export const TodoRevertCheckToast = ({ todoId, isVisible }: IProps) => {
     >
       <View style={styles.contentContainer}>
         <Animated.View style={[styles.timeoutBar, timeoutBarStyle]} />
-        <TouchableOpacity style={styles.undoButton} activeOpacity={0.7}>
+        <TouchableOpacity
+          style={styles.undoButton}
+          activeOpacity={0.7}
+          onPress={onUndoPress}
+        >
           <Icon name="arrow-undo-outline" color="#fff" size={24} />
           <Text style={styles.title}>UNDO</Text>
         </TouchableOpacity>
@@ -74,14 +76,20 @@ const styles = StyleSheet.create({
     width: 300,
     backgroundColor: '#f59e0b',
     borderRadius: 10,
-    paddingVertical: 10,
+    paddingTop: 16,
+    paddingBottom: 10,
     alignItems: 'center',
     position: 'relative',
     overflow: 'hidden',
   },
   undoButton: {
     flexDirection: 'row',
-    gap: 16,
+    alignItems: 'center',
+    gap: 10,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    borderRadius: 999,
+    borderColor: '#fff',
   },
   title: {
     fontSize: 24,
@@ -92,7 +100,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     position: 'absolute',
     width: 300,
-    // left: 0,
     top: 0,
     right: 0,
   },
