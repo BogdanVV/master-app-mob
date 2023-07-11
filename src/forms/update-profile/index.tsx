@@ -143,6 +143,7 @@ export const UpdateProfileForm = ({
           disabled={!isDirty || isUpdatingProfile || !isValid}
           title="SUBMIT"
           onPress={handleSubmit(onSubmit)}
+          isLoading={isUpdatingProfile}
         />
       </View>
     </View>

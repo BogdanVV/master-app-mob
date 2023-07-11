@@ -1,25 +1,23 @@
-import { ITodo, TodoPriorities } from 'src/store/todos'
+import { ITodo } from 'src/store/todos'
 import { DAYS_OF_WEEK_FULL, DAYS_OF_WEEK_SHORT } from 'src/constants'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { getPriorityIconProps } from '@utils'
 
 type Props = {
   todo: ITodo
   isChecked: boolean
   onCheckPress: (id: number) => void
+  onTodoPress: (id: number) => void
 }
 
-export const TodoListItem = ({ todo, isChecked, onCheckPress }: Props) => {
-  const getPriorityIconProps = (): { name: string; color: string } => {
-    if (todo.priority === TodoPriorities.LOW) {
-      return { name: 'chevron-up', color: '#fff' }
-    }
-    if (todo.priority === TodoPriorities.MEDIUM) {
-      return { name: 'chevron-double-up', color: '#f97316' }
-    }
-    return { name: 'chevron-triple-up', color: '#dc2626' }
-  }
-  const priorityIconProps = getPriorityIconProps()
+export const TodoListItem = ({
+  todo,
+  isChecked,
+  onCheckPress,
+  onTodoPress,
+}: Props) => {
+  const priorityIconProps = getPriorityIconProps(todo?.priority)
 
   const getActiveDaysIndexes = (): number[] => {
     if (todo.isDaily) {
@@ -39,9 +37,7 @@ export const TodoListItem = ({ todo, isChecked, onCheckPress }: Props) => {
     <TouchableOpacity
       style={styles.container}
       activeOpacity={0.7}
-      onPress={() => {
-        console.log('todo item click')
-      }}
+      onPress={() => onTodoPress(todo.id)}
     >
       <View style={styles.infoContainer}>
         <View style={styles.topInfoContainer}>

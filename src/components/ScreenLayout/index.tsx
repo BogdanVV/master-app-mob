@@ -1,10 +1,27 @@
 import { PropsWithChildren } from 'react'
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native'
+import { RefreshControl } from 'react-native-gesture-handler'
 
-export const ScreenLayout = ({ children }: PropsWithChildren) => {
+interface IProps extends PropsWithChildren {
+  onRefresh?: () => void
+  isRefreshing?: boolean
+}
+
+export const ScreenLayout = ({
+  children,
+  isRefreshing = false,
+  onRefresh,
+}: IProps) => {
   return (
     <SafeAreaView style={styles.layoutContainer}>
-      <ScrollView contentContainerStyle={styles.fullScrollView}>
+      <ScrollView
+        {...(onRefresh && {
+          refreshControl: (
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+          ),
+        })}
+        contentContainerStyle={styles.fullScrollView}
+      >
         {children}
       </ScrollView>
     </SafeAreaView>

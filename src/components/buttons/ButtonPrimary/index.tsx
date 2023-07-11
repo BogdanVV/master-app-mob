@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,6 +11,7 @@ export interface IPrimaryButtonProps extends TouchableOpacityProps {
   titleColor?: string
   title: string
   disabled?: boolean
+  isLoading?: boolean
 }
 
 export const ButtonPrimary = ({
@@ -18,6 +20,7 @@ export const ButtonPrimary = ({
   onPress,
   title,
   disabled = false,
+  isLoading = false,
 }: IPrimaryButtonProps) => {
   return (
     <TouchableOpacity
@@ -29,18 +32,23 @@ export const ButtonPrimary = ({
         { backgroundColor: disabled ? '#d1d5db' : bgColor },
       ]}
     >
-      <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
+      {isLoading ? (
+        <ActivityIndicator size={24} color="#fff" />
+      ) : (
+        <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
+      )}
     </TouchableOpacity>
   )
 }
 const styles = StyleSheet.create({
   button: {
     borderRadius: 100,
-    paddingVertical: 16,
+    // paddingVertical: 16,
     paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
     width: 'auto',
+    height: 50,
   },
   title: {
     fontWeight: '700',

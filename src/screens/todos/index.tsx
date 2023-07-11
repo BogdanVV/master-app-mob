@@ -1,5 +1,5 @@
-import { TodoListItem } from '@components'
-import { useEffect } from 'react'
+import { TodoListItem, TodoRevertCheckToast } from '@components'
+import { useCallback, useEffect, useState } from 'react'
 import {
   ScrollView,
   StyleSheet,
@@ -11,8 +11,14 @@ import { ScreenLayout } from 'src/components/ScreenLayout'
 import { useTodos } from 'src/store/todos'
 import { shallow } from 'zustand/shallow'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { TodosStackType } from '@types'
 
-export const TodosScreen = () => {
+interface IProps {
+  navigation: StackNavigationProp<TodosStackType>
+}
+
+export const TodosScreen = ({ navigation }: IProps) => {
   const { loadTodos, isTodosLoading, todosLoadingError, todos } = useTodos(
     state => ({
       loadTodos: state.loadTodos,
@@ -22,15 +28,34 @@ export const TodosScreen = () => {
     }),
     shallow,
   )
+  const [isRevertToastVisible, setIsRevertToastVisible] =
+    useState<boolean>(false)
 
-  // console.log(JSON.stringify(todos, null, 4))
+  const onTodoPress = (id: number) => {
+    navigation.navigate('Todo', { id })
+  }
+
+  const onCheckPress = (id: number) => {
+    console.log('id>>>', id)
+    if (!isRevertToastVisible) {
+      setIsRevertToastVisible(true)
+      setTimeout(() => {
+        setIsRevertToastVisible(false)
+      }, 3000)
+    }
+  }
+
+  const onRefresh = useCallback(() => {
+    loadTodos()
+  }, [])
 
   useEffect(() => {
     loadTodos()
   }, [loadTodos])
 
   return (
-    <ScreenLayout>
+    <ScreenLayout isRefreshing={isTodosLoading} onRefresh={onRefresh}>
+      <TodoRevertCheckToast isVisible={isRevertToastVisible} todoId={123} />
       <View style={styles.contentContainer}>
         <TouchableOpacity
           style={styles.addButton}
@@ -52,19 +77,34 @@ export const TodosScreen = () => {
         ) : isTodosLoading ? (
           <Text style={{ color: '#fff' }}>Loading...</Text>
         ) : (
-          // TODO: replace with FlatList
           <ScrollView contentContainerStyle={styles.listContainer}>
             {todos.map(t => (
               <TodoListItem
+                onTodoPress={onTodoPress}
                 isChecked={false}
-                onCheckPress={(id: number) => {
-                  console.log(`item with id ${id} clicked`)
-                }}
+                onCheckPress={() => onCheckPress(t.id)}
                 key={t.id}
                 todo={t}
               />
             ))}
           </ScrollView>
+          // Not using FlatList because ScreenLayout component is wrapped in ScrollView
+          // <FlatList
+          //   data={[...todos, ...todos, ...todos, ...todos, ...todos, ...todos]}
+          //   keyExtractor={todo => `${todo.id}`}
+          //   renderItem={({ item }) => (
+          //     <TodoListItem
+          //       isChecked={false}
+          //       onCheckPress={() => {}}
+          //       todo={item}
+          //     />
+          //   )}
+          //   ItemSeparatorComponent={() => (
+          //     <View style={styles.listItemSeparator} />
+          //   )}
+          //   ListFooterComponent={<View />}
+          //   ListFooterComponentStyle={{ height: 90 }}
+          // />
         )}
       </View>
     </ScreenLayout>
@@ -76,8 +116,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     position: 'relative',
-    borderWidth: 2,
-    borderColor: 'red',
   },
   listContainer: {
     gap: 8,
@@ -105,5 +143,8 @@ const styles = StyleSheet.create({
     right: 16,
     bottom: 16,
     zIndex: 10,
+  },
+  listItemSeparator: {
+    height: 10,
   },
 })

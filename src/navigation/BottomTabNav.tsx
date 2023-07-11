@@ -1,14 +1,22 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { Text } from 'react-native'
+import { Text, View } from 'react-native'
 import { BottomTabsStack } from '@types'
-import { HomeScreen, TodosScreen } from '@screens'
+import { HomeScreen } from '@screens'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { SettingsStack } from './SettingsStack'
+import { TodosStack } from './TodosStack'
+import { ScreenLayout } from '@components'
 
 const Tab = createBottomTabNavigator<BottomTabsStack>()
 
 const ToBeDeveloped = () => {
-  return <Text>To be developed...</Text>
+  return (
+    <ScreenLayout>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ color: '#fff' }}>To be developed...</Text>
+      </View>
+    </ScreenLayout>
+  )
 }
 
 export const BottomTabNav = () => {
@@ -37,7 +45,7 @@ export const BottomTabNav = () => {
         }}
       />
       <Tab.Screen
-        component={TodosScreen}
+        component={TodosStack}
         name="Todos"
         options={{
           tabBarIcon: ({ focused, color }) => (

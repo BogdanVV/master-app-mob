@@ -16,6 +16,11 @@ export type SettingsStackType = {
   Profile: undefined
 }
 
+export type TodosStackType = {
+  TodosMain: undefined
+  Todo: { id: number }
+}
+
 export type RootNavStack = {
   Auth: AuthStackType
   BottomTabs: BottomTabsStack

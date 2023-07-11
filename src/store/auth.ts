@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IUser, ResponseError } from '@types'
-import { ILoginForm } from 'src/screens/auth/login'
-import { ISignupForm } from 'src/screens/auth/signup'
 import { IProfileForm } from 'src/screens/settings/profile'
 import { http } from 'src/utils/axios'
 import { create } from 'zustand'
 import Toast from 'react-native-toast-message'
+import { ILoginForm } from '@forms/login'
+import { ISignupForm } from '@forms/signup'
 
 type LoginResponse = { data: { user: IUser; accessToken: string } }
 
@@ -138,7 +138,6 @@ export const useAppAuth = create<IAppAuthStore>((set, get) => ({
       updateProfileError: null,
     }))
     try {
-      console.log('input>>>', input)
       const formData = new FormData()
       Object.entries(input).forEach(entry => {
         formData.append(entry[0], entry[1])
@@ -156,7 +155,6 @@ export const useAppAuth = create<IAppAuthStore>((set, get) => ({
           },
         )
       ).data
-      console.log('response data>>>', data)
 
       set(state => ({ ...state, user: data.data }))
       Toast.show({
