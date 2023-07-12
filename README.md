@@ -25,3 +25,7 @@ yeap, there are animations created using `react-native-reanimated` (_WHAT A SURP
 ##
 
 No fancy stuff here yet.
+
+##
+
+RN sucks IMHO. The app crashes without explicit reason. Updating one package can cause the app to fail to build. Migrating to newer version is awful, sometimes it comes down to copying all custom files to a newly bootstraped project with desired version of RN. Dev experience is atrocious. RN is unstable and I'm disappointed in using it :(
