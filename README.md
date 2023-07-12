@@ -28,4 +28,6 @@ No fancy stuff here yet.
 
 ##
 
-RN sucks IMHO. The app crashes without explicit reason. Updating one package can cause the app to fail to build. Migrating to newer version is awful, sometimes it comes down to copying all custom files to a newly bootstraped project with desired version of RN. Dev experience is atrocious. RN is unstable and I'm disappointed in using it :(
+RN sucks IMHO. The app crashes without explicit reason. Updating one package can cause the app to fail to build. Migrating to newer version is awful, sometimes it comes down to copying all custom files to a newly bootstraped project with desired version of RN. Dev experience is atrocious. Launching old projects on different environments is smth I don't wanna discuss at all, perhaps it's a trauma for me. RN is unstable technology and I'm disappointed in using it :(
+Looking into MAUI.
+
